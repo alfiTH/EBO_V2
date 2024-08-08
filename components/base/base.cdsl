@@ -1,0 +1,11 @@
+import "DifferentialRobot.idsl";
+
+Component base
+{
+    Communications
+    {
+        implements DifferentialRobot;
+    };
+    language python;
+};
+

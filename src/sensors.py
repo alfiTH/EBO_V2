@@ -11,21 +11,22 @@ from time import sleep, time
 
 from RPi import GPIO
 
-VL6180X_CHANNELS = [4, 17, 27, 10, 9]
-TCS34725_CHANNELS = [5, 6]
-
+VL6180X_CHANNELS = [4, 17, 27,22, 10, 9, 11, 5, 6]
+TCS34725 = 20
+TCS34725_LED = 21
+TCS34725_CHANNELS = [TCS34725, TCS34725_LED]
 
 GPIO.setup(TCS34725_CHANNELS, GPIO.OUT)
 GPIO.output(TCS34725_CHANNELS, GPIO.LOW)
 
 ms = MultiSensor(ce_gpios=VL6180X_CHANNELS, 
-                 new_i2c_addresses=[0x30, 0x31, 0x32, 0x33, 0x34], 
-                 offsets=[100, 100, 100, 100, 100])
+                 new_i2c_addresses=[0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38], 
+                 offsets=[100, 100, 100, 100, 100, 100, 100, 100, 100])
 
 GPIO.output(TCS34725_CHANNELS, GPIO.HIGH)
 sleep(0.5)
 
-led = GPIO.PWM(5, 200)
+led = GPIO.PWM(TCS34725_LED, 200)
 led.start(75)
 # sleep(5)
 # GPIO.output(5, GPIO.HIGH)
@@ -52,7 +53,7 @@ sensor.gain = 4
 # Main loop reading color and printing it every second.
 while True:
     # Raw data from the sensor in a 4-tuple of red, green, blue, clear light component values
-    # print(sensor.color_raw)
+    print(sensor.color_raw)
     t1 = time()
     color = sensor.color
     color_rgb = sensor.color_rgb_bytes
