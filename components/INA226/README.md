@@ -1,13 +1,15 @@
-# ledStrip
+# INA226
 Intro to component here
 
+
 ## Dependencies 
+Install pi_ina226
 ```bash
-pip3 install rpi_ws281x  adafruit-circuitpython-neopixel
+cd ~/software && git clone https://github.com/e71828/pi_ina226.git && pip install ./pi_ina226 && cd - 
 ```
 
 ## Configuration parameters
-As any other component, *ledStrip* needs a configuration file to start. In
+As any other component, *INA226* needs a configuration file to start. In
 ```
 etc/config
 ```
@@ -20,7 +22,7 @@ EXAMPLE HERE
 To avoid changing the *config* file in the repository, we can copy it to the component's home directory, so changes will remain untouched by future git pulls:
 
 ```
-cd <ledStrip's path> 
+cd <INA226's path> 
 ```
 ```
 cp etc/config config
@@ -29,5 +31,5 @@ cp etc/config config
 After editing the new config file we can run the component:
 
 ```
-bin/ledStrip config
+bin/INA226 config
 ```

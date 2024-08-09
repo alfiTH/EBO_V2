@@ -36,10 +36,10 @@ def check_config_json(data):
 
     # Extract GPIO pin for LED
     led = data.get("LED")
-    if led is None:
+    if led is None or led["GPIO"] is None:
         print("LED key is missing.")
         return False
-    gpio_pins.append(led)
+    gpio_pins.append(led["GPIO"])
 
     # Check for duplicates
     gpio_counter = Counter(gpio_pins)

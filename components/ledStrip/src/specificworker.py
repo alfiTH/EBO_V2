@@ -25,14 +25,16 @@ from rich.console import Console
 from genericworker import *
 import interfaces as ifaces
 
-sys.path.append('/opt/robocomp/lib')
 console = Console(highlight=False)
 
+import board
+import neopixel
+from time import sleep
+import json
 
-# If RoboComp was compiled with Python bindings you can use InnerModel in Python
-# import librobocomp_qmat
-# import librobocomp_osgviewer
-# import librobocomp_innermodel
+sys.path.append('../../include')
+from check_config_json import check_config_json
+
 
 
 class SpecificWorker(GenericWorker):
@@ -41,38 +43,36 @@ class SpecificWorker(GenericWorker):
         self.Period = 2000
         if startup_check:
             self.startup_check()
+            self.timer = None
         else:
             self.timer.timeout.connect(self.compute)
-            self.timer.start(self.Period)
 
     def __del__(self):
         """Destructor"""
 
     def setParams(self, params):
-        # try:
-        #	self.innermodel = InnerModel(params["InnerModelPath"])
-        # except:
-        #	traceback.print_exc()
-        #	print("Error reading config params")
+        if self.timer is not None:
+            print("Loading config")
+            try:
+                pathFile = str(params["jsonConfig"])
+            except Exception:
+                print("Error reading config params")
+
+            with open(pathFile) as json_file:
+                dataParams = json.load(json_file)
+                assert check_config_json(dataParams), "Configuration has issues."
+
+            
+            # self.ledStrip = neopixel.NeoPixel(dataParams["LED"]["GPIO"], dataParams["LED"]["Number"],  brightness=0.2, auto_write=True)
+            self.timer.start(self.Period)
+            
         return True
 
 
     @QtCore.Slot()
     def compute(self):
         print('SpecificWorker.compute...')
-        # computeCODE
-        # try:
-        #   self.differentialrobot_proxy.setSpeedBase(100, 0)
-        # except Ice.Exception as e:
-        #   traceback.print_exc()
-        #   print(e)
 
-        # The API of python-innermodel is not exactly the same as the C++ version
-        # self.innermodel.updateTransformValues('head_rot_tilt_pose', 0, 0, 0, 1.3, 0, 0)
-        # z = librobocomp_qmat.QVec(3,0)
-        # r = self.innermodel.transform('rgbd', z, 'laser')
-        # r.printvector('d')
-        # print(r[0], r[1], r[2])
 
         return True
 
@@ -99,7 +99,12 @@ class SpecificWorker(GenericWorker):
     # IMPLEMENTATION of setLEDArray method from LEDArray interface
     #
     def LEDArray_setLEDArray(self, pixelArray):
-        ret = byte()
+        ret = byte(0)
+        for id, rgb in pixelArray:
+            if 0 <= id < len(self.ledStrip):
+                self.ledStrip[id] = (rgb.red, rgb.green, rgb.blue, rgb.white)
+            else:
+                ret -= -1
         #
         # write your CODE here
         #

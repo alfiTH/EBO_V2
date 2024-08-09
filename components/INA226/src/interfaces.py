@@ -5,57 +5,11 @@ from rich.console import Console, Text
 console = Console()
 
 
-Ice.loadSlice("-I ./src/ --all ./src/EmergencyStop.ice")
-import RoboCompEmergencyStop
-Ice.loadSlice("-I ./src/ --all ./src/EmergencyStopPub.ice")
-import RoboCompEmergencyStopPub
-Ice.loadSlice("-I ./src/ --all ./src/GenericBase.ice")
-import RoboCompGenericBase
-Ice.loadSlice("-I ./src/ --all ./src/Laser.ice")
-import RoboCompLaser
-Ice.loadSlice("-I ./src/ --all ./src/RGBSensor.ice")
-import RoboCompRGBSensor
+Ice.loadSlice("-I ./src/ --all ./src/BatteryStatus.ice")
+import RoboCompBatteryStatus
 
-class shortVector(list):
-    def __init__(self, iterable=list()):
-        super(shortVector, self).__init__(iterable)
 
-    def append(self, item):
-        assert isinstance(item, int)
-        super(shortVector, self).append(item)
-
-    def extend(self, iterable):
-        for item in iterable:
-            assert isinstance(item, int)
-        super(shortVector, self).extend(iterable)
-
-    def insert(self, index, item):
-        assert isinstance(item, int)
-        super(shortVector, self).insert(index, item)
-
-setattr(RoboCompLaser, "shortVector", shortVector)
-class TLaserData(list):
-    def __init__(self, iterable=list()):
-        super(TLaserData, self).__init__(iterable)
-
-    def append(self, item):
-        assert isinstance(item, RoboCompLaser.TData)
-        super(TLaserData, self).append(item)
-
-    def extend(self, iterable):
-        for item in iterable:
-            assert isinstance(item, RoboCompLaser.TData)
-        super(TLaserData, self).extend(iterable)
-
-    def insert(self, index, item):
-        assert isinstance(item, RoboCompLaser.TData)
-        super(TLaserData, self).insert(index, item)
-
-setattr(RoboCompLaser, "TLaserData", TLaserData)
-
-import emergencystopI
-import laserI
-import rgbsensorI
+import batterystatusI
 
 
 
@@ -64,8 +18,6 @@ class Publishes:
         self.ice_connector = ice_connector
         self.mprx={}
         self.topic_manager = topic_manager
-
-        self.emergencystoppub = self.create_topic("EmergencyStopPub", RoboCompEmergencyStopPub.EmergencyStopPubPrx)
 
 
     def create_topic(self, topic_name, ice_proxy):
@@ -152,9 +104,7 @@ class Subscribes:
 class Implements:
     def __init__(self, ice_connector, default_handler):
         self.ice_connector = ice_connector
-        self.emergencystop = self.create_adapter("EmergencyStop", emergencystopI.EmergencyStopI(default_handler))
-        self.laser = self.create_adapter("Laser", laserI.LaserI(default_handler))
-        self.rgbsensor = self.create_adapter("RGBSensor", rgbsensorI.RGBSensorI(default_handler))
+        self.batterystatus = self.create_adapter("BatteryStatus", batterystatusI.BatteryStatusI(default_handler))
 
     def create_adapter(self, property_name, interface_handler):
         adapter = self.ice_connector.createObjectAdapter(property_name)
@@ -167,7 +117,7 @@ class InterfaceManager:
         # TODO: Make ice connector singleton
         self.ice_config_file = ice_config_file
         self.ice_connector = Ice.initialize(self.ice_config_file)
-        needs_rcnode = True
+        needs_rcnode = False
         self.topic_manager = self.init_topic_manager() if needs_rcnode else None
 
         self.status = 0

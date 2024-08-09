@@ -1,6 +1,11 @@
 # sensors
 Intro to component here
 
+## Dependencies 
+```bash
+cd ~/software && git clone https://github.com/alfiTH/vl6180x_multi && pip3 install vl6180x_multi
+pip3 install adafruit-circuitpython-tcs34725
+```
 
 ## Configuration parameters
 As any other component, *sensors* needs a configuration file to start. In

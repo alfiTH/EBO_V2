@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
-#    Copyright (C) 2024 by YOUR NAME HERE
+#    Copyright (C) 2024 by Alejandro Torrejón Harto
 #
 #    This file is part of RoboComp
 #
@@ -37,14 +37,8 @@ import json
 
 sys.path.append('../../include')
 from check_config_json import check_config_json
-# from TI_INA226_micropython.ina226 import INA226
 
 console = Console(highlight=False)
-
-# If RoboComp was compiled with Python bindings you can use InnerModel in Python
-# import librobocomp_qmat
-# import librobocomp_osgviewer
-# import librobocomp_innermodel
 
 
 class SpecificWorker(GenericWorker):
@@ -71,9 +65,6 @@ class SpecificWorker(GenericWorker):
             print("Loading config")
             try:
                 pathFile = str(params["jsonConfig"])
-                self.paramsBattery = [float(params["maxBattery"]), float(params["minBattery"])]
-                assert min(self.paramsBattery)>0, "Battery limits must be upper zero"
-                assert self.paramsBattery[0]<self.paramsBattery[1], "Max battery must upper that min battery"
             except Exception:
                 print("Error reading config params")
 
@@ -97,8 +88,6 @@ class SpecificWorker(GenericWorker):
             i2c = board.I2C()  # uses board.SCL and board.SDA
             self.RGBSensor = adafruit_tcs34725.TCS34725(i2c)
             self.RGBSensor.gain = 4 # Change sensor gain to 1, 4, 16, or 60
-
-            # self.powerSensor = INA226(i2c, addr=int(self.params["Power_sensor"], 16))
         
             self.LiDARsValue = ifaces.RoboCompLaser.TLaserData()
 
@@ -125,13 +114,11 @@ class SpecificWorker(GenericWorker):
                 auxLiDARsValue.append(ifaces.RoboCompLaser.TData(angle=item["angle"], dist=self.LiDARs.get_range(item["id"])))
         self.LiDARsValue = auxLiDARsValue
 
-        # print(self.BatteryStatus_getBatteryState())
+        
         print(self.Laser_getLaserData())
         print(self.RGBSensor_getRGBPixel())
 
     def startup_check(self):
-        print(f"Testing RoboCompBatteryStatus.TBattery from ifaces.RoboCompBatteryStatus")
-        test = ifaces.RoboCompBatteryStatus.TBattery()
         print(f"Testing RoboCompLaser.LaserConfData from ifaces.RoboCompLaser")
         test = ifaces.RoboCompLaser.LaserConfData()
         print(f"Testing RoboCompLaser.TData from ifaces.RoboCompLaser")
@@ -143,22 +130,9 @@ class SpecificWorker(GenericWorker):
         QTimer.singleShot(200, QApplication.instance().quit)
 
 
-    def calc_percentage(self, voltage):
-        return ((voltage - self.paramsBattery[0])*100)/ (self.paramsBattery[1]-self.paramsBattery[0])
     # =============== Methods for Component Implements ==================
     # ===================================================================
 
-    #
-    # IMPLEMENTATION of getBatteryState method from BatteryStatus interface
-    #
-    def BatteryStatus_getBatteryState(self):
-        ret = ifaces.RoboCompBatteryStatus.TBattery()
-        # ret.voltage = self.powerSensor.bus_voltage
-        # ret.current = self.powerSensor.current
-        # ret.power = self.powerSensor.power
-        # ret.percentage = self.calc_percentage(voltage=ret.voltage)
-
-        return ret
     #
     # IMPLEMENTATION of isEmergency method from EmergencyStop interface
     #
@@ -215,10 +189,6 @@ class SpecificWorker(GenericWorker):
     ######################
     # From the RoboCompEmergencyStopPub you can publish calling this methods:
     # self.emergencystoppub_proxy.emergencyStop(...)
-
-    ######################
-    # From the RoboCompBatteryStatus you can use this types:
-    # RoboCompBatteryStatus.TBattery
 
     ######################
     # From the RoboCompLaser you can use this types:

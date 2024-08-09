@@ -2,13 +2,12 @@ import "Laser.idsl";
 import "EmergencyStop.idsl";
 import "EmergencyStopPub.idsl";
 import "RGBSensor.idsl";
-import "BatteryStatus.idsl";
 
 Component sensors
 {
     Communications
     {
-        implements Laser, EmergencyStop, RGBSensor, BatteryStatus;
+        implements Laser, EmergencyStop, RGBSensor;
         publishes EmergencyStopPub;
     };
     language python;

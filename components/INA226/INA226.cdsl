@@ -1,0 +1,11 @@
+import "BatteryStatus.idsl";
+
+Component INA226
+{
+    Communications
+    {
+        implements BatteryStatus;
+    };
+    language python;
+};
+

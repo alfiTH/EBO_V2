@@ -16,6 +16,4 @@ Ice.Trace.Protocol=0
 Ice.MessageSizeMax=20004800
 
 jsonConfig=/home/robocomp/robocomp/components/EBO_V2/etc/raspberry_config.json
-maxBattery=26
-minBattery=23
 

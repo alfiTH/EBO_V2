@@ -103,7 +103,10 @@
     "IN3": 16,
     "IN4": 7
   },
-  "LED": 18,
+  "LED": {
+    "GPIO": 18,
+    "Number": 5
+  },
   "Power_sensor": "0x4F"
 }
 

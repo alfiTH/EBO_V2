@@ -26,16 +26,12 @@ from genericworker import *
 import interfaces as ifaces
 
 import json
-
+from ina226 import INA226
 
 console = Console(highlight=False)
+
 sys.path.append('../../include')
 from check_config_json import check_config_json
-from L298N import L298N
-
-#TODO CALCULATE
-ROT_CONST = 0.3
-ADV_CONST = 0.3
 
 class SpecificWorker(GenericWorker):
     def __init__(self, proxy_map, startup_check=False):
@@ -47,108 +43,64 @@ class SpecificWorker(GenericWorker):
         else:
             self.timer.timeout.connect(self.compute)
 
+
     def __del__(self):
         """Destructor"""
-        self.base.setStateMotor(False)
 
     def setParams(self, params):
         if self.timer is not None:
             print("Loading config")
             try:
                 pathFile = str(params["jsonConfig"])
+                self.paramsBattery = [float(params["maxBattery"]), float(params["minBattery"])]
+                assert min(self.paramsBattery)>0, "Battery limits must be upper zero"
+                assert self.paramsBattery[0]<self.paramsBattery[1], "Max battery must upper that min battery"
             except Exception:
                 print("Error reading config params")
 
             with open(pathFile) as json_file:
                 dataParams = json.load(json_file)
                 assert check_config_json(dataParams), "Configuration has issues."
-            self.base = L298N(dataParams["ENA"], dataParams["IN1"], dataParams["IN2"], 
-                              dataParams["ENB"], dataParams["IN3"], dataParams["IN4"])
-            self.base.setStateMotor(True)
+            self.powerSensor = INA226(busnum=1, address=int(dataParams["Power_sensor"],16), max_expected_amps=20, shunt_ohms=0.002)
+            self.powerSensor.configure()
 
             self.timer.start(self.Period)
         return True
 
 
-
     @QtCore.Slot()
     def compute(self):
+        print(self.BatteryStatus_getBatteryState())
         return True
 
     def startup_check(self):
-        print(f"Testing RoboCompDifferentialRobot.TMechParams from ifaces.RoboCompDifferentialRobot")
-        test = ifaces.RoboCompDifferentialRobot.TMechParams()
+        print(f"Testing RoboCompBatteryStatus.TBattery from ifaces.RoboCompBatteryStatus")
+        test = ifaces.RoboCompBatteryStatus.TBattery()
         QTimer.singleShot(200, QApplication.instance().quit)
 
-
+    def calc_percentage(self, voltage):
+        return ((voltage - self.paramsBattery[0])*100)/ (self.paramsBattery[1]-self.paramsBattery[0])
 
     # =============== Methods for Component Implements ==================
     # ===================================================================
 
     #
-    # IMPLEMENTATION of correctOdometer method from DifferentialRobot interface
+    # IMPLEMENTATION of getBatteryState method from BatteryStatus interface
     #
-    def DifferentialRobot_correctOdometer(self, x, z, alpha):
-        pass
+    def BatteryStatus_getBatteryState(self):
+        ret = ifaces.RoboCompBatteryStatus.TBattery()
+        ret.voltage = self.powerSensor.voltage()
+        ret.current = self.powerSensor.current()
+        ret.power = self.powerSensor.power()
+        ret.percentage = self.calc_percentage(voltage=ret.voltage)
 
-
-    #
-    # IMPLEMENTATION of getBasePose method from DifferentialRobot interface
-    #
-    def DifferentialRobot_getBasePose(self):
-        return [x, z, alpha]
-    #
-    # IMPLEMENTATION of getBaseState method from DifferentialRobot interface
-    #
-    def DifferentialRobot_getBaseState(self):
-        state = RoboCompGenericBase.TBaseState()
-        return state
-    #
-    # IMPLEMENTATION of resetOdometer method from DifferentialRobot interface
-    #
-    def DifferentialRobot_resetOdometer(self):
-        pass
-
-
-    #
-    # IMPLEMENTATION of setOdometer method from DifferentialRobot interface
-    #
-    def DifferentialRobot_setOdometer(self, state):
-        pass
-
-
-    #
-    # IMPLEMENTATION of setOdometerPose method from DifferentialRobot interface
-    #
-    def DifferentialRobot_setOdometerPose(self, x, z, alpha):
-        pass
-
-
-    #
-    # IMPLEMENTATION of setSpeedBase method from DifferentialRobot interface
-    #
-    def DifferentialRobot_setSpeedBase(self, adv, rot):
-        advSpeed = adv * ADV_CONST
-        rotSpeed = rot * ROT_CONST
-
-        self.base.setSpeed(max(min(advSpeed + rotSpeed, 100), -100), 
-                           max(min(advSpeed - rotSpeed, 100), -100))
-
-
-
-    #
-    # IMPLEMENTATION of stopBase method from DifferentialRobot interface
-    #
-    def DifferentialRobot_stopBase(self):
-        self.base.setSpeed(0, 0)
-
-
+        return ret
     # ===================================================================
     # ===================================================================
 
 
     ######################
-    # From the RoboCompDifferentialRobot you can use this types:
-    # RoboCompDifferentialRobot.TMechParams
+    # From the RoboCompBatteryStatus you can use this types:
+    # RoboCompBatteryStatus.TBattery
 
 
