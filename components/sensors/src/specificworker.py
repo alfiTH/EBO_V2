@@ -75,10 +75,16 @@ class SpecificWorker(GenericWorker):
             print("Configuring GPIOs")
             GPIO.setup(list(self.params["RGB_sensor"].values()), GPIO.OUT, initial=GPIO.LOW)
 
+            mode_gpio = self.params.get("mode_gpio")
+            if mode_gpio is None:
+                mode_gpio = GPIO.BCM
+            else:
+                mode_gpio = getattr(GPIO, mode_gpio)
+                
             self.LiDARs = MultiSensor([item["id"] for item in self.params["LiDARs"]], 
                             gpios=[item["GPIO"] for item in self.params["LiDARs"]], 
                             new_i2c_addresses=[int(item["new_i2c_address"], 16) for item in self.params["LiDARs"]], 
-                            offsets=[item["offset"] for item in self.params["LiDARs"]])
+                            offsets=[item["offset"] for item in self.params["LiDARs"]], mode_gpio=mode_gpio)
 
             GPIO.output(self.params["RGB_sensor"]["GPIO_sensor"], GPIO.HIGH)
             self.ledSensor = GPIO.PWM(self.params["RGB_sensor"]["GPIO_led"], 200)
@@ -98,13 +104,14 @@ class SpecificWorker(GenericWorker):
 
     @QtCore.Slot()
     def compute(self):
+        distance_fall = self.LiDARs.get_range("anti-fall")
         if self.emergency:
-            if self.LiDARs.get_range("anti-fall")<100:
+            if distance_fall==0:
                 self.emergency = False
                 self.emergencystoppub_proxy.emergencyStop(self.emergency)
                 
         else:
-            if self.LiDARs.get_range("anti-fall")>125:
+            if distance_fall!=0:
                 self.emergency = True 
                 self.emergencystoppub_proxy.emergencyStop(self.emergency)
 
@@ -114,7 +121,8 @@ class SpecificWorker(GenericWorker):
                 auxLiDARsValue.append(ifaces.RoboCompLaser.TData(angle=item["angle"], dist=self.LiDARs.get_range(item["id"])))
         self.LiDARsValue = auxLiDARsValue
 
-        
+        print(self.LiDARs.get_range("anti-fall"))
+        print(self.EmergencyStop_isEmergency())
         print(self.Laser_getLaserData())
         print(self.RGBSensor_getRGBPixel())
 
