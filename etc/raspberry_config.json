@@ -1,99 +1,100 @@
 {
+  "mode_gpio": "BCM",
   "LiDARs": [
     {
       "id": "anti-fall",
       "GPIO": 4,
       "new_i2c_address": "0x30",
-      "offset": 100
+      "offset": 101
     },
     {
       "id": "1",
       "angle": 0,
-      "GPIO": 17,
+      "GPIO": 10,
       "new_i2c_address": "0x31",
-      "offset": 100
+      "offset": 82
     },
     {
       "id": "2",
       "angle": 1.0472,
-      "GPIO": 27,
+      "GPIO": 9,
       "new_i2c_address": "0x32",
-      "offset": 100
+      "offset": 32
     },
     {
       "id": "3",
       "angle": 1.5708,
-      "GPIO": 22,
+      "GPIO": 11,
       "new_i2c_address": "0x33",
-      "offset": 100
+      "offset": -6
     },
     {
       "id": "4",
       "angle": 2.0944,
-      "GPIO": 10,
+      "GPIO": 5,
       "new_i2c_address": "0x34",
-      "offset": 100
+      "offset": 112
     },
     {
       "id": "5",
       "angle": 2.35619,
-      "GPIO": 9,
+      "GPIO": 6,
       "new_i2c_address": "0x35",
-      "offset": 100
+      "offset": -25
     },
     {
       "id": "6",
       "angle": 2.61799,
-      "GPIO": 11,
+      "GPIO": 21,
       "new_i2c_address": "0x36",
-      "offset": 100
+      "offset": -20
     },
     {
       "id": "7",
       "angle": 3.14159,
-      "GPIO": 5,
+      "GPIO": 7,
       "new_i2c_address": "0x37",
-      "offset": 100
+      "offset": 33
     },
     {
       "id": "8",
       "angle": 3.66519,
-      "GPIO": 6,
+      "GPIO": 8,
       "new_i2c_address": "0x38",
-      "offset": 100
+      "offset": -5
     },
     {
       "id": "9",
       "angle": 3.92699,
-      "GPIO": 8,
+      "GPIO": 25,
       "new_i2c_address": "0x39",
-      "offset": 100
+      "offset": -20
     },
     {
       "id": "10",
       "angle": 4.18879,
-      "GPIO": 25,
+      "GPIO": 23,
       "new_i2c_address": "0x3A",
-      "offset": 100
+      "offset": 105
     },
     {
       "id": "11",
       "angle": 4.71239,
       "GPIO": 24,
       "new_i2c_address": "0x3B",
-      "offset": 100
+      "offset": -6
     },
     {
       "id": "12",
       "angle": 5.23599,
-      "GPIO": 23,
+      "GPIO": 18,
       "new_i2c_address": "0x3C",
-      "offset": 100
+      "offset": 97
     }
   ],
   "RGB_sensor": {
-    "GPIO_sensor": 20,
-    "GPIO_led": 21
+    "GPIO_sensor": 17,
+    "GPIO_led": 27
   },
   "Drives": {
     "ENA": 13,
@@ -101,11 +102,11 @@
     "IN2": 26,
     "ENB": 12,
     "IN3": 16,
-    "IN4": 7
+    "IN4": 20
   },
   "LED": {
-    "GPIO": 18,
-    "Number": 5
+    "GPIO": 22,
+    "Number": 54
   },
   "Power_sensor": "0x4F"
 }
