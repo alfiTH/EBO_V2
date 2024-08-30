@@ -45,7 +45,7 @@ python src/sensors.py
 
 ## Tira led
 ```bash
-sudo python src/leds.py
+sudo --preserve-env=PATH,VIRTUAL_ENV python3 leds.py
 ```
 
 ## Base
