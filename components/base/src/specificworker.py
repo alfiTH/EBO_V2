@@ -34,8 +34,8 @@ from check_config_json import check_config_json
 from L298N import L298N
 
 #TODO CALCULATE
-ROT_CONST = 0.3
-ADV_CONST = 0.3
+ROT_CONST = 100/75.5 #max speed 75.5mm/s
+ADV_CONST = 100/0.8125 #max rot speed 0.8125rad/s
 
 class SpecificWorker(GenericWorker):
     def __init__(self, proxy_map, startup_check=False):
