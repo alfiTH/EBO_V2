@@ -53,10 +53,11 @@ class SpecificWorker(GenericWorker):
             try:
                 pathFile = str(params["jsonConfig"])
                 self.paramsBattery = [float(params["maxBattery"]), float(params["minBattery"])]
-                assert min(self.paramsBattery)>0, "Battery limits must be upper zero"
-                assert self.paramsBattery[0]<self.paramsBattery[1], "Max battery must upper that min battery"
             except Exception:
                 print("Error reading config params")
+            assert min(self.paramsBattery)>0, "Battery limits must be upper zero"
+            assert self.paramsBattery[0]>self.paramsBattery[1], "Max battery must upper that min battery"
+            
 
             with open(pathFile) as json_file:
                 dataParams = json.load(json_file)
@@ -79,7 +80,7 @@ class SpecificWorker(GenericWorker):
         QTimer.singleShot(200, QApplication.instance().quit)
 
     def calc_percentage(self, voltage):
-        return ((voltage - self.paramsBattery[0])*100)/ (self.paramsBattery[1]-self.paramsBattery[0])
+        return (((voltage - self.paramsBattery[1])*100))/ (self.paramsBattery[0]-self.paramsBattery[1])
 
     # =============== Methods for Component Implements ==================
     # ===================================================================
@@ -90,8 +91,8 @@ class SpecificWorker(GenericWorker):
     def BatteryStatus_getBatteryState(self):
         ret = ifaces.RoboCompBatteryStatus.TBattery()
         ret.voltage = self.powerSensor.voltage()
-        ret.current = self.powerSensor.current()
-        ret.power = self.powerSensor.power()
+        ret.current = self.powerSensor.current()/1000
+        ret.power = self.powerSensor.power()/1000
         ret.percentage = self.calc_percentage(voltage=ret.voltage)
 
         return ret
