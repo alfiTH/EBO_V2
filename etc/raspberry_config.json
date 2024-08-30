@@ -73,21 +73,21 @@
     {
       "id": "10",
       "angle": 4.18879,
-      "GPIO": 23,
+      "GPIO": 24,
       "new_i2c_address": "0x3A",
-      "offset": 105
+      "offset": -6
     },
     {
       "id": "11",
       "angle": 4.71239,
-      "GPIO": 24,
+      "GPIO": 23,
       "new_i2c_address": "0x3B",
-      "offset": -6
+      "offset": 107
     },
     {
       "id": "12",
       "angle": 5.23599,
-      "GPIO": 18,
+      "GPIO": 22,
       "new_i2c_address": "0x3C",
       "offset": 97
     }
@@ -105,7 +105,7 @@
     "IN4": 20
   },
   "LED": {
-    "GPIO": 22,
+    "GPIO": 18,
     "Number": 54
   },
   "Power_sensor": "0x4F"
