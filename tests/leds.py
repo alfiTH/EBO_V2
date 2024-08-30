@@ -9,19 +9,28 @@ import board
 import neopixel
 from time import sleep
 
-pixels = neopixel.NeoPixel(board.D18, 14,  brightness=0.2, auto_write=True)
+NUMLEDS : int = 54
+
+pixels = neopixel.NeoPixel(getattr(board, "D"+"18"), NUMLEDS,  brightness=0.5, auto_write=True)
+pixels.fill((0,0,0))
+sleep(5)
+
 pixels.fill((255, 0, 0))
+sleep(1)
+pixels.fill((0, 255, 255))
+sleep(1)
+pixels.fill((255, 255, 255))
 sleep(1)
 
 pixels[0] = (255, 255, 0)
 
-for x in range(0, 14):
+for x in range(NUMLEDS):
     pixels[x] = (255, 0, 255)
-    sleep(.5)
+    sleep(.1)
 
 pixels.fill((0, 0, 0))
 
-for x in range(0, 14):
+for x in range(NUMLEDS):
     pixels[x] = (random.randint(0,255), random.randint(0,255), random.randint(0,255))
     sleep(0.1)
 

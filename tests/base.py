@@ -8,16 +8,33 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'i
 from L298N import L298N
 
 from time import sleep
+PERIOD = 1.5
 
-base = L298N(13, 23, 24, 17, 27, 12)
+base = L298N(13, 19, 26, 16, 20, 12)
 base.setStateMotor(True)
-base.setSpeed(50,0)
-sleep(4)
-base.setSpeed(0,50)
-sleep(4)
 
-base.setSpeed(50,50)
-sleep(4)
+sleep(PERIOD)
+
+base.setSpeed(30,30)
+sleep(PERIOD)
+
+base.setSpeed(-50,-50)
+sleep(PERIOD)
+
+base.setSpeed(75,75)
+sleep(PERIOD)
 
 base.setSpeed(-100,-100)
-sleep(4)
+sleep(PERIOD)
+
+base.setSpeed(30,-30)
+sleep(PERIOD)
+
+base.setSpeed(50,-50)
+sleep(PERIOD)
+
+base.setSpeed(-75,75)
+sleep(PERIOD)
+
+base.setSpeed(100,-100)
+sleep(PERIOD)
