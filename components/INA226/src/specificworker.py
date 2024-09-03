@@ -36,7 +36,7 @@ from check_config_json import check_config_json
 class SpecificWorker(GenericWorker):
     def __init__(self, proxy_map, startup_check=False):
         super(SpecificWorker, self).__init__(proxy_map)
-        self.Period = 2000
+        self.Period = 50
         if startup_check:
             self.startup_check()
             self.timer = None
