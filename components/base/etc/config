@@ -1,5 +1,5 @@
 # Endpoints for implements interfaces
-DifferentialRobot.Endpoints=tcp -p 18662
+DifferentialRobot.Endpoints=tcp -p 10004
 
 
 

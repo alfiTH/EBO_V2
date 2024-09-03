@@ -34,13 +34,15 @@ from check_config_json import check_config_json
 from L298N import L298N
 
 #TODO CALCULATE
-ROT_CONST = 100/75.5 #max speed 75.5mm/s
-ADV_CONST = 100/0.8125 #max rot speed 0.8125rad/s
+ADV_CONST :float = 100/75.5 #max speed 75.5mm/s
+ROT_CONST :float = 100/0.8125 #max rot speed 0.8125rad/s
 
 class SpecificWorker(GenericWorker):
     def __init__(self, proxy_map, startup_check=False):
         super(SpecificWorker, self).__init__(proxy_map)
         self.Period = 2000
+
+        print(f"Constants {ROT_CONST}, {ADV_CONST}")
         if startup_check:
             self.startup_check()
             self.timer = None
@@ -62,8 +64,8 @@ class SpecificWorker(GenericWorker):
             with open(pathFile) as json_file:
                 dataParams = json.load(json_file)
                 assert check_config_json(dataParams), "Configuration has issues."
-            self.base = L298N(dataParams["ENA"], dataParams["IN1"], dataParams["IN2"], 
-                              dataParams["ENB"], dataParams["IN3"], dataParams["IN4"])
+            self.base = L298N(ENA=dataParams["Drives"]["ENA"], IN1=dataParams["Drives"]["IN1"], IN2=dataParams["Drives"]["IN2"], 
+                              ENB=dataParams["Drives"]["ENB"], IN3=dataParams["Drives"]["IN3"], IN4=dataParams["Drives"]["IN4"])
             self.base.setStateMotor(True)
 
             self.timer.start(self.Period)
@@ -130,9 +132,11 @@ class SpecificWorker(GenericWorker):
     def DifferentialRobot_setSpeedBase(self, adv, rot):
         advSpeed = adv * ADV_CONST
         rotSpeed = rot * ROT_CONST
-
-        self.base.setSpeed(max(min(advSpeed + rotSpeed, 100), -100), 
-                           max(min(advSpeed - rotSpeed, 100), -100))
+        
+        rightMotor = max(min(advSpeed + rotSpeed, 100), -100)
+        leftMotor = max(min(advSpeed - rotSpeed, 100), -100)
+        print(f"Get speed adv {adv} |rot {rot}, Set motor speed to right{rightMotor}% and left {leftMotor}%")
+        self.base.setSpeed(rightMotor, leftMotor)
 
 
 
