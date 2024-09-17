@@ -30,6 +30,8 @@ import adafruit_tcs34725
 
 from vl6180x_multi import MultiSensor
 from time import sleep, time
+from threading import Lock
+
 
 from RPi import GPIO
 
@@ -53,6 +55,8 @@ class SpecificWorker(GenericWorker):
             self.timer=None
         else:
             self.timer.timeout.connect(self.compute)
+            
+            self.mutex = Lock()
             
 
     def __del__(self):
@@ -106,12 +110,12 @@ class SpecificWorker(GenericWorker):
     def compute(self):
         distance_fall = self.LiDARs.get_range("anti-fall")
         if self.emergency:
-            if distance_fall==0:
+            if distance_fall<2:
                 self.emergency = False
                 self.emergencystoppub_proxy.emergencyStop(self.emergency)
                 
         else:
-            if distance_fall!=0:
+            if distance_fall>1:
                 self.emergency = True 
                 self.emergencystoppub_proxy.emergencyStop(self.emergency)
 
@@ -119,12 +123,13 @@ class SpecificWorker(GenericWorker):
         for item in self.params["LiDARs"]:
             if "angle" in item:
                 auxLiDARsValue.append(ifaces.RoboCompLaser.TData(angle=item["angle"], dist=self.LiDARs.get_range(item["id"])))
+        self.mutex.acquire()
         self.LiDARsValue = auxLiDARsValue
-
-        print(self.LiDARs.get_range("anti-fall"))
-        print(self.EmergencyStop_isEmergency())
-        print(self.Laser_getLaserData())
-        print(self.RGBSensor_getRGBPixel())
+        self.mutex.release()
+        #print(self.LiDARs.get_range("anti-fall"))
+        #print(self.EmergencyStop_isEmergency())
+        #print(self.Laser_getLaserData())
+        #print(self.RGBSensor_getRGBPixel())
 
     def startup_check(self):
         print(f"Testing RoboCompLaser.LaserConfData from ifaces.RoboCompLaser")
@@ -162,7 +167,16 @@ class SpecificWorker(GenericWorker):
     # IMPLEMENTATION of getLaserData method from Laser interface
     #
     def Laser_getLaserData(self):
-        return self.LiDARsValue
+        # Asegurarse de adquirir el mutex antes de leer self.LiDARsValue
+        self.mutex.acquire()
+        try:
+            # Lee el valor de self.LiDARsValue dentro de la sección crítica
+            data = self.LiDARsValue
+        finally:
+            # Asegurarse de liberar el mutex incluso si hay un error
+            self.mutex.release()
+    
+        return data
     #
     # IMPLEMENTATION of getLux method from RGBSensor interface
     #
