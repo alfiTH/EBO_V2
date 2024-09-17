@@ -1,0 +1,14 @@
+[Unit]
+Description=Service that launches the base component.
+After=network.target
+
+[Service]
+WorkingDirectory=/home/robocomp/robocomp/components/EBO_V2/components/base
+ExecStart=/home/robocomp/software/pip_venv/bin/python src/base.py etc/config
+Restart=always
+RestartSec=5
+User=robolab
+
+[Install]
+WantedBy=multi-user.target
+

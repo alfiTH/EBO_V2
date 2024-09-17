@@ -1,0 +1,14 @@
+[Unit]
+Description=Service that launches the INA226 component.
+After=network.target
+
+[Service]
+WorkingDirectory=/home/robocomp/robocomp/components/EBO_V2/components/INA226
+ExecStart=/home/robocomp/software/pip_venv/bin/python src/INA226.py etc/config
+Restart=always
+RestartSec=5
+User=robolab
+
+[Install]
+WantedBy=multi-user.target
+

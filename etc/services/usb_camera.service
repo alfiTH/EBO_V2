@@ -1,0 +1,14 @@
+[Unit]
+Description=Service that launches the usb_camera component.
+After=network.target
+
+[Service]
+WorkingDirectory=/home/robocomp/robocomp/components/robocomp-robolab/components/hardware/camera/usb_camera
+ExecStart=bash ./bin/usb_camera etc/config
+Restart=always
+RestartSec=5
+User=robolab
+
+[Install]
+WantedBy=multi-user.target
+

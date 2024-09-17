@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Exec=/bin/sh -c 'cd /home/robocomp/robocomp/components/robocomp-giraff/components/TTS && /home/robocomp/software/pip_venv/bin/python src/speech.py etc/config'
+Hidden=false
+NoDisplay=false
+X-GNOME-Autostart-enabled=true
+Name[C]=TTS
+Name=TTS
+Comment[C]=Launches the TTS component
+Comment=Launches the TTS component

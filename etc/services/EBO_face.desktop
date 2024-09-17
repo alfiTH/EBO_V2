@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Exec=/bin/sh -c 'cd /home/robocomp/robocomp/components/robocomp-giraff/components/EBO_face && /home/robocomp/software/pip_venv/bin/python src/emotionalMotor.py etc/config'
+Hidden=false
+NoDisplay=false
+X-GNOME-Autostart-enabled=true
+Name[C]=Eboface
+Name=Eboface
+Comment[C]=Launches the EBO_face component
+Comment=Launches the EBO_face component

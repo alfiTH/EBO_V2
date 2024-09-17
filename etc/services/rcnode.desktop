@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Exec=bash /home/robocomp/robocomp/tools/rcnode/rcnode.sh
+Hidden=false
+NoDisplay=false
+X-GNOME-Autostart-enabled=true
+Name[C]=rcnode
+Name=rcnode
+Comment[C]=launch rcnode
+Comment=launch rcnode
