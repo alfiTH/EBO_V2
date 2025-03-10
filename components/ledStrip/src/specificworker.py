@@ -63,7 +63,7 @@ class SpecificWorker(GenericWorker):
                 assert check_config_json(dataParams), "Configuration has issues."
 
             
-            # self.ledStrip = neopixel.NeoPixel(dataParams["LED"]["GPIO"], dataParams["LED"]["Number"],  brightness=0.2, auto_write=True)
+            self.ledStrip = neopixel.NeoPixel(getattr(board, "D"+str(dataParams["LED"]["GPIO"])), dataParams["LED"]["Number"],  brightness=0.2, auto_write=False)
             self.timer.start(self.Period)
             
         return True
@@ -99,13 +99,13 @@ class SpecificWorker(GenericWorker):
     # IMPLEMENTATION of setLEDArray method from LEDArray interface
     #
     def LEDArray_setLEDArray(self, pixelArray):
-        ret = byte(0)
-        for id, rgb in pixelArray:
+        ret = True
+        for id, rgb in pixelArray.items():
             if 0 <= id < len(self.ledStrip):
-                self.ledStrip[id] = (rgb.red, rgb.green, rgb.blue, rgb.white)
+                self.ledStrip[id] = (rgb.red, rgb.green, rgb.blue)
             else:
-                ret -= -1
-        #
+                ret =False
+        self.ledStrip.show()
         # write your CODE here
         #
         return ret

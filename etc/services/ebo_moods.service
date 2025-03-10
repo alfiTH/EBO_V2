@@ -1,0 +1,14 @@
+[Unit]
+Description=Service that launches ebo_moods componente
+After=network.target
+
+[Service]
+WorkingDirectory=/home/robocomp/robocomp/components/ebo_moods
+ExecStart=/home/robocomp/software/pip_venv/bin/python src/ebo_moods.py etc/config
+Restart=always
+RestartSec=5
+User=robolab
+
+[Install]
+WantedBy=multi-user.target
+

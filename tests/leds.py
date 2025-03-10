@@ -11,7 +11,7 @@ from time import sleep
 
 NUMLEDS : int = 54
 
-pixels = neopixel.NeoPixel(getattr(board, "D"+"18"), NUMLEDS,  brightness=0.5, auto_write=True)
+pixels = neopixel.NeoPixel(getattr(board, "D"+"18"), NUMLEDS,  brightness=0.3, auto_write=True)
 pixels.fill((0,0,0))
 sleep(5)
 
